@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import sys
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -25,7 +27,7 @@ SECRET_KEY = 'r2n_txjg4rz+ud24cox6b*+2k%py5b)x$77vjp16$11f*ln4r-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -73,15 +75,23 @@ WSGI_APPLICATION = 'shoplist.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, 'my.cnf'),
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+               'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'tests.db',
         }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'TEST_NAME': 'test_shoplist',
+            'OPTIONS': {
+                'read_default_file': os.path.join(BASE_DIR, 'my.cnf'),
+            }
+        }
+    }
 
 
 # Password validation
