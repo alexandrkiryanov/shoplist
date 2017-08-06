@@ -1,10 +1,30 @@
 {% extends "shoplistapp/base.html" %}
 
-{% block title %} ShopListName {% endblock %}
+{% block title %}  {% endblock %}
 
 {% block body %}
-<h1>{{ shopList.name }} </h1>
 
-<a class="btn btn-primary btn-lg" role="button" href="#">Click me</a>
+<form action="./" method="post">
 
+    {% csrf_token %}
+    <h1>{{shoplist_form.name}} </h1>
+
+    {{ formset.management_form }}
+
+
+    {% for form in formset %}
+    <ul>
+        <li>{{ form.itemChecked }} {{ form.itemName }}</li>
+    </ul>
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+
+    {% endfor %}
+
+
+
+    <input type="submit" value="{% trans 'Save' %}" />
+
+</form>
 {% endblock %}
