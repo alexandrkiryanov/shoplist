@@ -1,25 +1,31 @@
 <!DOCTYPE html>
 
-{% load staticfiles %}
-
 <html lang="en">
 <head>
 
-    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" >
-    <title>
-          {% block title %}No title{% endblock %}</title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+    <title>{% block title %}No title{% endblock %}</title>
 </head>
 
 <body>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% block body %}
-    Empty body
-    {% endblock %}
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+        <div class="row">
+            <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible"{% endif %} role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {{ message }}
+            </div>
+
+        </div>
+            {% endfor %}
+        {% endif %}
+        {% block body %}
+        Empty body
+        {% endblock %}
+    </div>
 </body>
 </html>

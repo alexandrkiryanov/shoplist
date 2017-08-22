@@ -3,28 +3,44 @@
 {% block title %}  {% endblock %}
 
 {% block body %}
+    <div class="row">
+        <form action="./" method="post">
 
-<form action="./" method="post">
-
-    {% csrf_token %}
-    <h1>{{shoplist_form.name}} </h1>
-
-    {{ formset.management_form }}
+            {% csrf_token %}
 
 
-    {% for form in formset %}
-    <ul>
-        <li>{{ form.itemChecked }} {{ form.itemName }}</li>
-    </ul>
-        {% for hidden in form.hidden_fields %}
-        {{ hidden }}
-        {% endfor %}
+            <div class="form-group">
+                    {{ shoplist_form.name | add_class:"form-control" }}
+            </div>
 
-    {% endfor %}
+            {{ formset.management_form }}
 
 
 
-    <input type="submit" value="{% trans 'Save' %}" />
+                {% for form in formset %}
 
-</form>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                {{ form.itemChecked}}
+                            </span>
+                            {{ form.itemName | add_class:"form-control" }}
+                        </div>
+                        <br/>
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+
+                {% endfor %}
+
+                <button class="btn btn-primary">{% trans 'Save' %}</button>
+
+
+                <script>
+                    $( document ).ready(function() {
+                        console.log( "ready!" );
+                    });
+                </script>
+
+        </form>
+    </div>
 {% endblock %}

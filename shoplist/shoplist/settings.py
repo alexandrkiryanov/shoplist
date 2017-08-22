@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import sys
@@ -61,7 +62,7 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'builtins': ['django.templatetags.i18n'],
+            'builtins': ['django.templatetags.i18n', 'widget_tweaks.templatetags.widget_tweaks', 'django.contrib.staticfiles.templatetags.staticfiles'],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -136,3 +137,7 @@ LANGUAGES = (
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'
+}
