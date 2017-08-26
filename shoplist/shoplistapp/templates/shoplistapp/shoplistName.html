@@ -9,38 +9,45 @@
             {% csrf_token %}
 
 
+
+
             <div class="form-group">
                     {{ shoplist_form.name | add_class:"form-control" }}
             </div>
 
+            {% for error in formset.errors %}
+                {{ error }}<br/>
+            {% endfor %}
+
             {{ formset.management_form }}
 
 
-
                 {% for form in formset %}
-
+                    <div class="dynamic-form">
                         <div class="input-group">
                             <span class="input-group-addon">
                                 {{ form.itemChecked}}
                             </span>
                             {{ form.itemName | add_class:"form-control" }}
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            {% if form.instance.pk %}{{ form.DELETE | add_class:"hidden"}}{% endif %}
+                            <span class="input-group-btn">
+                                <button class="btn btn-default delete-row" type="button">{% trans 'Delete' %}</button>
+                            </span>
                         </div>
                         <br/>
-                    {% for hidden in form.hidden_fields %}
-                    {{ hidden }}
-                    {% endfor %}
+                    </div>
 
                 {% endfor %}
+                <button class="btn btn-default add-row" name="add">{% trans 'Add' %}</button>
+                <button class="btn btn-primary" name="save">{% trans 'Save' %}</button>
 
-                <button class="btn btn-primary">{% trans 'Save' %}</button>
 
-
-                <script>
-                    $( document ).ready(function() {
-                        console.log( "ready!" );
-                    });
-                </script>
-
+            <script type="text/javascript">
+                applyDynamicForm('shoplistitem_set');
+            </script>
         </form>
     </div>
 {% endblock %}

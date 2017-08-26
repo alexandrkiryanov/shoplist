@@ -27,23 +27,32 @@ def index(request):
 
 
 def shoplist(request, list_id):
-    shop_list = get_object_or_404(ShopList, pk=list_id)
+    shoplist = get_object_or_404(ShopList, pk=list_id)
 
     if request.method == 'POST':
-        shoplist_form = ShopListForm(request.POST, instance=shop_list)
+        shoplist_form = ShopListForm(request.POST, instance=shoplist)
 
-        if shoplist_form.is_valid():
-            shop_list = shoplist_form.save(commit=False)
-            formset = ShopListItemFormSet(request.POST, instance=shop_list)
-            if formset.is_valid():
-                shop_list.save()
-                formset.save()
-                messages.add_message(request, messages.INFO, _('Shop List saved.'))
-        else:
-            formset = ShopListItemFormSet(request.POST, instance=shop_list)
+        if 'save' in request.POST:
+            if shoplist_form.is_valid():
+                shoplist = shoplist_form.save()
+                formset = ShopListItemFormSet(request.POST, instance=shoplist)
+                if formset.is_valid():
+                    for form in formset.forms:
+                        if form.cleaned_data.get('DELETE') and form.instance.pk:
+                            form.instance.delete()
+                        else:
+                            shoplist_item = form.save(commit=False)
+                            shoplist_item.list = shoplist
+                            shoplist_item.save()
+                    messages.add_message(request, messages.INFO, _('Shop List saved.'))
 
-    else:
-        shoplist_form = ShopListForm(instance=shop_list)
-        formset = ShopListItemFormSet(instance=shop_list)
+    shoplist = get_object_or_404(ShopList, pk=list_id)
+
+    shoplist_form = ShopListForm(instance=shoplist)
+    formset = ShopListItemFormSet(instance=shoplist)
 
     return render(request, 'shoplistapp/shoplistName.html', {'formset': formset, 'shoplist_form': shoplist_form})
+
+
+def add_shoplist_item(shoplist):
+    shoplist.shoplistitem_set.create(itemName='New Item', itemChecked=False)
