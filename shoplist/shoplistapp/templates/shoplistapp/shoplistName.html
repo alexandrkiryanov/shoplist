@@ -15,6 +15,10 @@
                     {{ shoplist_form.name | add_class:"form-control" }}
             </div>
 
+            {% for error in shoplist_form.errors %}
+            {{ error }}<br/>
+            {% endfor %}
+
             {% for error in formset.errors %}
                 {{ error }}<br/>
             {% endfor %}
@@ -37,10 +41,11 @@
                                 <button class="btn btn-default delete-row" type="button">{% trans 'Delete' %}</button>
                             </span>
                         </div>
-                        <br/>
                     </div>
 
                 {% endfor %}
+
+                <br/>
                 <button class="btn btn-default add-row" name="add">{% trans 'Add' %}</button>
                 <button class="btn btn-primary" name="save">{% trans 'Save' %}</button>
 

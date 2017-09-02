@@ -23,33 +23,42 @@ def index(request):
     shop_list.shoplistitem_set.add(item2, bulk=False)
     shop_list.shoplistitem_set.add(item3, bulk=False)
 
-    return redirect(shoplist, list_id=shop_list.id)
+    return redirect("shoplist_by_uuid", list_uuid=shop_list.uuid)
 
 
-def shoplist(request, list_id):
+def shoplist_by_id(request, list_id):
     shoplist = get_object_or_404(ShopList, pk=list_id)
+    return render_shoplist(request, shoplist)
 
-    if request.method == 'POST':
+
+def shoplist_by_uuid(request, list_uuid):
+    shoplist = get_object_or_404(ShopList, uuid = list_uuid)
+    return render_shoplist(request, shoplist)
+
+
+def render_shoplist(request, shoplist):
+    if request.method == 'POST' and 'save' in request.POST:
         shoplist_form = ShopListForm(request.POST, instance=shoplist)
-
-        if 'save' in request.POST:
-            if shoplist_form.is_valid():
-                shoplist = shoplist_form.save()
-                formset = ShopListItemFormSet(request.POST, instance=shoplist)
-                if formset.is_valid():
-                    for form in formset.forms:
-                        if form.cleaned_data.get('DELETE') and form.instance.pk:
-                            form.instance.delete()
-                        else:
-                            shoplist_item = form.save(commit=False)
-                            shoplist_item.list = shoplist
-                            shoplist_item.save()
-                    messages.add_message(request, messages.INFO, _('Shop List saved.'))
-
-    shoplist = get_object_or_404(ShopList, pk=list_id)
-
-    shoplist_form = ShopListForm(instance=shoplist)
-    formset = ShopListItemFormSet(instance=shoplist)
+        if shoplist_form.is_valid():
+            shoplist = shoplist_form.save()
+            formset = ShopListItemFormSet(request.POST, instance=shoplist)
+            if formset.is_valid():
+                for form in formset.forms:
+                    if form.cleaned_data.get('DELETE') and form.instance.pk:
+                        form.instance.delete()
+                    else:
+                        shoplist_item = form.save(commit=False)
+                        shoplist_item.list = shoplist
+                        shoplist_item.save()
+                shoplist_form = ShopListForm(instance=shoplist)
+                formset = ShopListItemFormSet(instance=shoplist)
+                messages.add_message(request, messages.INFO, _('Shop List saved.'))
+        else:
+            formset = ShopListItemFormSet(request.POST, instance=shoplist)
+    else:
+        shoplist = get_object_or_404(ShopList, pk=shoplist.pk)
+        shoplist_form = ShopListForm(instance=shoplist)
+        formset = ShopListItemFormSet(instance=shoplist)
 
     return render(request, 'shoplistapp/shoplistName.html', {'formset': formset, 'shoplist_form': shoplist_form})
 
